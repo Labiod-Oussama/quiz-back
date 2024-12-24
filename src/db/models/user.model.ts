@@ -8,7 +8,7 @@ export interface UserAttributes {
 }
 
 export interface UserCreationAttributes extends Omit<UserAttributes, 'id'> { }
-
+ 
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model<UserAttributes, UserCreationAttributes> {
 

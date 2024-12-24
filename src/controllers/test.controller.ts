@@ -1,12 +1,12 @@
 import 'dotenv/config';
-import { RequestHandler } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { Test, TestsAttributes } from '../db/models/test.model';
 import { TokenPayload } from '../services/token.service';
 import { Patient } from '../db/models/patient.model';
 import { User } from '../db/models/user.model';
 
 
-export const getAllTests: RequestHandler = async (req, res) => {
+export const getAllTests = async (req: Request, res: Response): Promise<any> => {
     const payload = res.locals as TokenPayload;
 
     try {
@@ -26,14 +26,14 @@ export const getAllTests: RequestHandler = async (req, res) => {
         });
 
         if (!tests.length) {
-            res.status(404).send('No tests found.');
+            return res.status(404).send('No tests found.');
         }
 
         // Filter tests belonging to the authenticated doctor
         const doctorTests = tests.filter(test => test.patient?.user?.id === payload.id);
 
         if (!doctorTests.length) {
-            res.status(404).send('No tests found for the logged-in doctor.');
+            return res.status(404).send('No tests found for the logged-in doctor.');
         }
 
         // Format response
@@ -41,7 +41,7 @@ export const getAllTests: RequestHandler = async (req, res) => {
             id: test.id,
             answers: test.answers,
             result: test.result,
-            examDate: test.createdAt, 
+            examDate: test.createdAt,
             patient: {
                 id: test.patient.id,
                 firstName: test.patient.firstName,
@@ -54,10 +54,10 @@ export const getAllTests: RequestHandler = async (req, res) => {
             },
         }));
 
-        res.status(200).json(formattedTests);
+        return res.status(200).json(formattedTests);
     } catch (error) {
         console.error('Error fetching tests:', error);
-        res.status(500).send('An error occurred while fetching the tests.');
+        return res.status(500).send('An error occurred while fetching the tests.');
     }
 };
 
@@ -129,3 +129,22 @@ export const saveTest: RequestHandler = async (req, res) => {
         res.status(500).send('An error occurred while saving the test');
     }
 }
+
+
+export const deleteTest: RequestHandler = async (req, res) => {
+    const testId = req.params.id;
+    try {
+        const test = await Test.findByPk(testId);
+
+        if (!test) {
+            res.status(404).send('الامتحان غير موجود');
+            return;
+        }
+
+        await test.destroy();
+        res.status(200).send('Test deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting test:', error);
+        res.status(500).send('An error occurred while deleting the test.');
+    }
+};

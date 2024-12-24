@@ -5,6 +5,7 @@ export interface PatientAttributes {
     id: number | string;
     firstName: string;
     lastName: string;
+    age: number;
     educationLevel: string;
     doctorId: number | string;
 }
@@ -22,6 +23,9 @@ export class Patient extends Model<PatientAttributes, Omit<PatientAttributes, 'i
 
     @Column({ type: DataType.STRING, allowNull: false })
     lastName!: string;
+
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    age!: number;
 
     @Column({ type: DataType.STRING, allowNull: true })
     educationLevel?: string;

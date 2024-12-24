@@ -16,7 +16,7 @@ export class UserService {
         return patients;
     }
 
-    addPatient = async (patient: Omit<PatientAttributes, 'id'>) => {
+    addPatient = async (patient: Omit<PatientAttributes, 'id' | 'doctorId'>) => {
         const newPatient = await Patient.create({
             ...patient,
             doctorId: this.userId

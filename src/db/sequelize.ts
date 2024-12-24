@@ -34,9 +34,9 @@ export class SequelizeConnection {
             .authenticate()
             .then((s) => {
                 // TODO: active this line when you want to sync the database with the models   
-                // SequelizeConnection.instance.sync({
-                //     alter: true,
-                // })
+                SequelizeConnection.instance.sync({
+                    alter: true,
+                })
                 console.log("Connection has been established successfully.");
             })
             .catch((err) => {
